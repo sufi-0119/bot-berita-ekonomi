@@ -81,33 +81,37 @@ def pick(items, cat, n=7):
 
 def build_message(items) -> str:
     now = datetime.now(WIB).strftime("%A, %d %B %Y")
-    makro = pick(items, "Makro", 7)
-    mikro = pick(items, "Mikro", 5)
+    makro = pick(items, "Makro", 5)
+    mikro = pick(items, "Mikro", 4)
     # fallback: jika mikro kosong, ambil dari Lainnya
     if len(mikro) < 3:
-        extra = [x for x in items if x["cat"] == "Lainnya"][: 5 - len(mikro)]
+        extra = [x for x in items if x["cat"] == "Lainnya"][: 4 - len(mikro)]
         mikro += extra
     if not makro:
-        makro = items[:7]
+        makro = items[:5]
 
     lines = [f"<b>Ringkasan Ekonomi Indonesia</b>", f"{now} — 08:00 WIB", ""]
-    lines.append("<b>1. MAKRO (Nasional & Pasar)</b>")
+    lines.append("<b>1. MAKRO (Nasional &amp; Pasar)</b>")
     for i, it in enumerate(makro, 1):
-        desc = it["desc"][:140] + ("..." if len(it["desc"]) > 140 else "")
-        lines.append(f'{i}. <a href="{it["link"]}">{html.escape(it["title"])}</a>')
+        desc = it["desc"][:120] + ("..." if len(it["desc"]) > 120 else "")
+        link = html.escape(it["link"], quote=True)
+        lines.append(f'{i}. <a href="{link}">{html.escape(it["title"])}</a>')
         lines.append(f'   [{it["source"]}] {html.escape(desc)}')
     lines.append("")
     lines.append("<b>2. MIKRO (UMKM, Konsumen, Energi Harian)</b>")
     for i, it in enumerate(mikro, 1):
-        desc = it["desc"][:140] + ("..." if len(it["desc"]) > 140 else "")
-        lines.append(f'{i}. <a href="{it["link"]}">{html.escape(it["title"])}</a>')
+        desc = it["desc"][:120] + ("..." if len(it["desc"]) > 120 else "")
+        link = html.escape(it["link"], quote=True)
+        lines.append(f'{i}. <a href="{link}">{html.escape(it["title"])}</a>')
         lines.append(f'   [{it["source"]}] {html.escape(desc)}')
     lines.append("")
     lines.append("Sumber: CNBC Indonesia, Katadata, Antara. Klik judul untuk baca penuh.")
     msg = "\n".join(lines)
-    # Telegram batas 4096 karakter
-    if len(msg) > 3900:
-        msg = msg[:3900] + "\n... (dipotong)"
+    # Telegram batas 4096 karakter — potong di batas baris agar tag HTML tidak terpotong
+    if len(msg) > 3500:
+        cut = msg[:3500]
+        cut = cut.rsplit("\n", 1)[0]
+        msg = cut + "\n... (dipotong)"
     return msg
 
 def send(msg: str):
