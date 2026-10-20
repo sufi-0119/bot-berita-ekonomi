@@ -2,9 +2,9 @@ name: Kirim Berita Ekonomi Harian
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # 09:00 WITA pagi
-    - cron: "0 9 * * *"   # 17:00 WITA sore
-  workflow_dispatch:
+    # 08:00 WIB = 01:00 UTC
+    - cron: "0 1 * * *"
+  workflow_dispatch: # tombol Run manual untuk tes
 
 jobs:
   kirim:
