@@ -2,7 +2,8 @@ name: Kirim Berita Ekonomi Harian
 
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 1 * * *"   # 09:00 WITA pagi
+    - cron: "0 9 * * *"   # 17:00 WITA sore
   workflow_dispatch:
 
 jobs:
